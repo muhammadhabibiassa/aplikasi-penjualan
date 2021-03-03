@@ -31,14 +31,16 @@
 	                                            <td>{{$data->description}}</td>
 	                                            <td>
 	                                                <a href="{{route('product-category.edit',['id' => $data->id])}}" class="btn btn-success">Edit</a>
-	                                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-categories{{$data->id}}">Delete</button>
+	                                                <button class="btn btn-danger" data-toggle="modal" data-target="#productCategory{{$data->id}}">Delete</button>
 	                                                <!-- Modal -->
-	                                                <div class="modal fade" id="modal-delete-categories{{$data->id}}" tabindex="-1" aria-labelled-by="exampleModalLabel" aria-hidden="true">
+	                                                <div class="modal fade" id="productCategory{{$data->id}}" tabindex="-1" role="dialog" aria-labelledby="productCategoryLabel" aria-hidden="true">
 	                                                    <div class="modal-dialog">
 	                                                        <div class="modal-content">
 	                                                            <div class="modal-header">
 	                                                                <h5 class="modal-title" id="exampleModalLabel">Hapus Kategori</h5>
-	                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+	                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															          <span aria-hidden="true">&times;</span>
+															        </button>
 	                                                            </div>
 	                                                            <form method="post" action="{{route('product-category.destroy',['id'=>$data->id])}}">
 	                                                                @csrf
@@ -47,7 +49,7 @@
 	                                                                    Yakin mau hapus categories dengan nama {{$data->name}}?
 	                                                                </div>
 	                                                                <div class="modal-footer">
-	                                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+	                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 	                                                                    <button type="submit" class="btn btn-primary">Ya, Hapus</button>
 	                                                                </div>
 	                                                            </form>
