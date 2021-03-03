@@ -30,8 +30,8 @@
 	                                            <td>{{$data->name}}</td>
 	                                            <td>{{$data->description}}</td>
 	                                            <td>
-	                                                <a href="{{route('product-category.edit',['id' => $data->id])}}" class="btn btn-success">Edit</a>
-	                                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-categories{{$data->id}}">Delete</button>
+	                                                <a href="{{route('product-category.edit',['id' => $data->id])}}" class="btn btn-success"><i class="fas fa-edit"></i></a>
+	                                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-categories{{$data->id}}"><i class="fas fa-trash"></i></button>
 	                                                <!-- Modal -->
 	                                                <div class="modal fade" id="modal-delete-categories{{$data->id}}" tabindex="-1" aria-labelled-by="exampleModalLabel" aria-hidden="true">
 	                                                    <div class="modal-dialog">
