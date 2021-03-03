@@ -12,7 +12,7 @@
                             <a href="{{route('customer.index')}}" class="btn btn-primary">Back</a>
                         </div>
                     </div>
-                    <form method="POST" action="{{route('store-customer.index')}}">
+                    <form method="POST" action="{{route('customer.store')}}">
                         @csrf
                         <div class="row">
                             <div class="col-md-6 mb-3">

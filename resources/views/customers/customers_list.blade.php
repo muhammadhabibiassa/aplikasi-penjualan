@@ -9,7 +9,7 @@
                             <h1>Customers List</h1>
                         </div>
                         <div class="col-md-6 text-right">
-                            <a href="{{route('create-customer.create')}}" class="btn btn-primary">Add</a>
+                            <a href="{{route('customer.create')}}" class="btn btn-primary">Add</a>
                         </div>
                     </div>
                     <div class="table-responsive">

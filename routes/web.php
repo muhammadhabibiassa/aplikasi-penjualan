@@ -45,10 +45,15 @@ Route::post('product-brand', [BrandController::class, 'store'])->name('store-bra
 /* Customer */
 Route::get('customer', [CustomerController::class, 'index'])->name('customer.index');
 
-Route::get('customer/{uuid}', [CustomerController::class, 'show']);
+Route::get('customer/{uuid}', [CustomerController::class, 'show'])->name('customer.show');
 
-Route::get('create-customer', [CustomerController::class, 'create'])->name('create-customer.create');
-Route::post('customer', [CustomerController::class, 'store'])->name('store-customer.index');
+Route::get('customer/create', [CustomerController::class, 'create'])->name('customer.create');
+Route::post('customer', [CustomerController::class, 'store'])->name('customer.store');
+
+Route::get('customer/{id}/edit', [CustomerController::class, 'edit'])->name('customer.edit');
+Route::patch('customer/{id}', [CustomerController::class, 'update'])->name('customer.update');
+
+Route::delete('customer/{id}', [CustomerController::class, 'destroy'])->name('customer.destroy');
 
 
 /* Suppliers */

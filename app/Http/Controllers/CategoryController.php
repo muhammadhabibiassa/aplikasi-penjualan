@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $datas = Category::paginate(1);
+        $datas = Category::paginate(15);
         return view('categories.categories_list', compact('datas'));
     }
 
@@ -77,7 +77,13 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Category::find($id);
+        $data->update([
+            'name' => $request->name,
+            'description' => $request->description,
+        ]);
+        // return redirect()->back();
+        return redirect()->route('product-category.index');
     }
 
     /**
@@ -88,6 +94,7 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Category::find($id)->delete();
+        return redirect()->back();
     }
 }
