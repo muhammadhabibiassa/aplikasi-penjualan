@@ -24,11 +24,11 @@ class Item extends Model
 
     public function category()
     {
-    	return $this->belongsTo('App\Category', 'idCategory');
+    	return $this->belongsTo('App\Models\Category', 'idCategory');
     }
 
     public function brand()
     {
-    	return $this->belongsTo('App\Brand', 'idBrand');
+    	return $this->belongsTo('App\Models\Brand', 'idBrand');
     }
 }

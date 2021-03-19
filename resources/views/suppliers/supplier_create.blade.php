@@ -9,10 +9,10 @@
                             <h1>Create Suppliers</h1>
                         </div>
                         <div class="col-md-6 text-right">
-                            <a href="{{route('suppliers.index')}}" class="btn btn-primary">Back</a>
+                            <a href="{{route('supplier.index')}}" class="btn btn-primary">Back</a>
                         </div>
                     </div>
-                    <form method="POST" action="{{route('store-suppliers.index')}}">
+                    <form method="POST" action="{{route('supplier.store')}}">
                         @csrf
                         <div class="row">
                             <div class="col-md-6 mb-3">

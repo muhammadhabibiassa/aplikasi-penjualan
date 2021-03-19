@@ -61,14 +61,14 @@
             </div>
 
             <li class="nav-item">
-                <a class="nav-link" href="charts.html">
-                    <i class="fas fa-fw fa-chart-area"></i>
+                <a class="nav-link" href="{{route('purchase.index')}}">
+                    <i class="fas fa-fw fa-shopping-cart"></i>
                     <span>Purchase</span></a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="charts.html">
-                    <i class="fas fa-fw fa-chart-area"></i>
+                <a class="nav-link" href="{{route('sales.index')}}">
+                    <i class="fas fa-fw fa-chart-line"></i>
                     <span>Sales</span></a>
             </li>
 
@@ -79,7 +79,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="{{route('suppliers.index')}}">
+                <a class="nav-link" href="{{route('supplier.index')}}">
                     <i class="fas fa-fw fa-user"></i>
                     <span>Supplier</span></a>
             </li>
@@ -93,11 +93,11 @@
                 <div id="collapseTwoh" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="buttons.html">All Items</a>
-                        <a class="collapse-item" href="buttons.html">Add Item</a>
+                        <a class="collapse-item" href="{{route('item.index')}}">All Items</a>
+                        <a class="collapse-item" href="{{route('item.create')}}">Add Item</a>
                         <a class="collapse-item" href="{{route('product-category.index')}}">Category</a>
                         <a class="collapse-item" href="{{route('product-brand.index')}}">Brand</a>
-                        <a class="collapse-item" href="buttons.html">Stock</a>
+                        <a class="collapse-item" href="{{route('stock.index')}}">Stock</a>
                     </div>
                 </div>
             </li>

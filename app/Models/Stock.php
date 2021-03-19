@@ -19,4 +19,9 @@ class Stock extends Model
     	'stockOut' => 'integer',
     	'total' => 'integer'
     ];
+
+    public function item()
+    {
+        return $this->belongsTo('App\Models\Item', 'idItem');
+    }
 }

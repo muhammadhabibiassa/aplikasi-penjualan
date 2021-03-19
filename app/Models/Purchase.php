@@ -23,8 +23,14 @@ class Purchase extends Model
     	'status' => 'string',
     ];
 
+    public function purchase_detail()
+    {
+        return $this->hasMany('App\Models\PurchaseDetail', 'purchaseId');
+    }
+
     public function supplier()
     {
-    	return $this->belongsTo('App\Supplier', 'idSupplier');
+    	return $this->belongsTo('App\Models\Supplier', 'idSupplier');
     }
+
 }

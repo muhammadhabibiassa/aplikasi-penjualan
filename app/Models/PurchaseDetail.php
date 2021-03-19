@@ -10,17 +10,18 @@ class PurchaseDetail extends Model
     use HasFactory;
 
     protected $fillable = [
-    	'idItem', 'ordered', 'accepted'
+    	'idItem', 'purchaseId', 'ordered', 'accepted'
     ];
 
     protected $casts = [
-    	'idItem' => 'integer',
+        'idItem' => 'integer',
+        'purchaseId' => 'integer',
     	'ordered' => 'integer',
     	'accepted' => 'integer'
     ];
 
     public function item()
     {
-    	return $this->belongsTo('App\Item', 'idItem');
+    	return $this->belongsTo('App\Models\Item', 'idItem');
     }
 }

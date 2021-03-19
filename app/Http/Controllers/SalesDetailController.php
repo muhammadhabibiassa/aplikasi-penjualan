@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\SalesDetail;
+use App\Models\Sales;
+use App\Models\Item;
 
 class SalesDetailController extends Controller
 {
@@ -45,7 +48,8 @@ class SalesDetailController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Sales::with(['item'])->find($id);
+        return view('salesdetail.salesdetail_show', compact('data'));
     }
 
     /**

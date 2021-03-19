@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Purchase;
+use App\Models\Supplier;
+use App\Models\Item;
+use App\Models\PurchaseDetail;
 
 class PurchaseController extends Controller
 {
@@ -13,7 +17,8 @@ class PurchaseController extends Controller
      */
     public function index()
     {
-        //
+        $datas = Purchase::with(['supplier'])->paginate(15);
+        return view('purchases.purchase_list', compact('datas'));
     }
 
     /**
@@ -23,7 +28,9 @@ class PurchaseController extends Controller
      */
     public function create()
     {
-        //
+        $suppliers = Supplier::get();
+        $items = Item::get();
+        return view('purchases.purchase_create', compact('suppliers', 'items'));
     }
 
     /**
@@ -34,7 +41,28 @@ class PurchaseController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $total = 0;
+        $purchase = Purchase::create([
+            'idSupplier' => $request->idSupplier,
+            'invoiceNumber' => $request->invoiceNumber,
+            'discount' => $request->discount,
+            'ppn' => $request->ppn,
+            'date' => $request->date,
+            'total' => 0,
+            'status' => !is_null($request->status)? 1 : 0,
+        ]);
+        // return redirect()->back();
+        foreach ($request->ordered as $key=>$order) {
+            $total += $order;
+            PurchaseDetail::create([
+                'purchaseId' => $purchase->id,
+                'idItem' => $request->itemId[$key],
+                'ordered' => $order,
+                'accepted' => 0,
+            ]);
+        }
+        Purchase::find($purchase->id)->update(['total' => $total]);
+        return redirect()->route('purchase.index')->with('success', 'Purchase successfully created');
     }
 
     /**
@@ -45,7 +73,8 @@ class PurchaseController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Purchase::with(['supplier', 'purchase_detail.item'])->find($id);
+        return view('purchases.purchase_show', compact('data'));
     }
 
     /**
@@ -56,7 +85,10 @@ class PurchaseController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Purchase::with(['supplier', 'purchase_detail.item'])->find($id);
+        $items = Item::get();
+        $suppliers = Supplier::get();
+        return view('purchases.purchase_edit', compact('data', 'suppliers', 'items'));
     }
 
     /**
@@ -68,7 +100,31 @@ class PurchaseController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $total = 0;
+        $data = Purchase::find($id);
+        $purchase = Purchase::update([
+            'idSupplier' => $request->idSupplier,
+            'invoiceNumber' => $request->invoiceNumber,
+            'discount' => $request->discount,
+            'ppn' => $request->ppn,
+            'date' => $request->date,
+            'total' => 0,
+            'status' => !is_null($request->status)? 1 : 0,
+        ]);
+        // return redirect()->back();
+        foreach ($request->ordered as $key=>$order) {
+            $total += $order;
+            PurchaseDetail::update([
+                'purchaseId' => $purchase->id,
+                'idItem' => $request->itemId[$key],
+                'ordered' => $order,
+                'accepted' => 0,
+            ]);
+        }
+        
+        Purchase::find($purchase->id)->update(['total' => $total]);
+        return redirect()->route('purchase.show')->with('success', 'Purchase successfully created');
+
     }
 
     /**
@@ -79,6 +135,7 @@ class PurchaseController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Purchase::find($id)->delete();
+        return redirect()->back();
     }
 }

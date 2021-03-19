@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Stock;
+use App\Models\Item;
 
 class StockController extends Controller
 {
@@ -13,7 +15,8 @@ class StockController extends Controller
      */
     public function index()
     {
-        //
+        $datas = Stock::with(['item'])->orderBy('created_at', 'desc')->paginate(15);
+        return view('stocks.stock_list', compact('datas'));
     }
 
     /**
@@ -23,7 +26,8 @@ class StockController extends Controller
      */
     public function create()
     {
-        //
+        $items = Item::get();
+        return view('stocks.stock_create', compact('items'));
     }
 
     /**
@@ -34,7 +38,22 @@ class StockController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $lastStock = Stock::where('idItem', $request->idItem)->orderBy('created_at', 'desc')->first();
+        $totals = 0;
+        if (!is_null($request->stockIn)) {
+            $totals = (int)$lastStock->total + (int)$request->stockIn;
+        } else {
+            $totals = (int)$lastStock->total - (int)$request->stockOut;
+        }
+        Stock::create([
+            'idItem' => $request->idItem,
+            'stockIn' => $request->stockIn,
+            'stockOut' => $request->stockOut,
+            'total' => $totals
+        ]);
+        // return redirect()->back();
+        return redirect()->route('stock.index')->with('success', 'Stock successfully created');
     }
 
     /**
@@ -45,7 +64,8 @@ class StockController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Stock::with(['item'])->find($id);
+        return view('stocks.stock_show', compact('data'));
     }
 
     /**
@@ -56,7 +76,9 @@ class StockController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Stock::with(['item'])->find($id);
+        $items = Item::get();
+        return view('stocks.stock_edit', compact('data', 'items'));
     }
 
     /**
@@ -68,7 +90,15 @@ class StockController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Stock::find($id);
+        $data->update([
+            'idItem' => $request->idItem,
+            'stockIn' => $request->stockIn,
+            'stockOut' => $request->stockOut,
+            'total' => $request->total,
+        ]);
+        // return redirect()->back();
+        return redirect()->route('stock.show', ['id' => $id]);
     }
 
     /**
@@ -79,6 +109,7 @@ class StockController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Stock::find($id)->delete();
+        return redirect()->back();
     }
 }

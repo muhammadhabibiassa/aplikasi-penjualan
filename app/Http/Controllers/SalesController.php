@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Sales;
+use App\Models\Item;
 
 class SalesController extends Controller
 {
@@ -13,7 +15,8 @@ class SalesController extends Controller
      */
     public function index()
     {
-        //
+        $datas = Sales::with(['item'])->paginate(15);
+        return view('sales.sales_list', compact('datas'));
     }
 
     /**
@@ -23,7 +26,8 @@ class SalesController extends Controller
      */
     public function create()
     {
-        //
+        $items = Item::get();
+        return view('sales.sales_create', compact('items'));
     }
 
     /**
@@ -34,7 +38,16 @@ class SalesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Sales::create([
+            'idItem' => $request->idItem,
+            'invoiceNumber' => $request->invoiceNumber,
+            'total' => $request->total,
+            'profit' => $request->profit,
+            'discount' => $request->discount,
+            'ppn' => $request->ppn,
+        ]);
+        // return redirect()->back();
+        return redirect()->route('sales.index')->with('success', 'Sales successfully created');
     }
 
     /**
@@ -79,6 +92,7 @@ class SalesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Sales::find($id)->delete();
+        return redirect()->back();
     }
 }
