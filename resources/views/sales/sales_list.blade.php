@@ -35,7 +35,7 @@
                                                 <td>{{$data->total}}</td>
                                                 <td>{{$data->profit}}</td>
                                                 <td class="text-center">
-                                                    <a href="{{route('salesdetail.show',['id' => $data->id])}}" class="btn btn-info"><i class="fas fa-info-circle"></i></a>
+                                                    <a href="{{route('sales.show',['id' => $data->id])}}" class="btn btn-info"><i class="fas fa-info-circle"></i></a>
                                                     <a href="{{route('sales.edit',['id' => $data->id])}}" class="btn btn-success"><i class="fas fa-edit"></i></a>
                                                     <button class="btn btn-danger" data-toggle="modal" data-target="#sales{{$data->id}}"><i class="fas fa-trash"></i></button>
                                                     <!-- Modal -->

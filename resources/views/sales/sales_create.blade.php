@@ -16,25 +16,8 @@
                         @csrf
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label>Item</label>
-                                <select class="form-control" name="idSupplier">
-                                    <option selected="" disabled="">--- Select item ---</option>
-                                    @foreach($items as $item)
-                                    <option value="{{$item->id}}">{{$item->name}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
                                 <label>Invoice Number</label>
                                 <input type="number" name="invoiceNumber" placeholder="Enter invoice number" class="form-control" required="">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label>Total</label>
-                                <input type="number" name="total" placeholder="Enter total" class="form-control" required="">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label>Profit</label>
-                                <input type="number" name="profit" placeholder="Enter profit" class="form-control" required="">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label>Discount (in percentage)</label>
@@ -43,6 +26,38 @@
                             <div class="col-md-6 mb-3">
                                 <label>PPN (in percentage)</label>
                                 <input type="number" name="ppn" placeholder="Enter ppn" class="form-control" required="">
+                            </div>
+                            <div class="col-md-12 my-3 table-responsive">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Category</th>
+                                                <th>Brand</th>
+                                                <th>Quantity</th>
+                                                <th>Total Pesanan</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (count($items) > 0)
+                                                @foreach ($items as $data)
+                                                    <tr>
+                                                        <td>{{$data->name}}</td>
+                                                        <td>{{$data->category->name}}</td>
+                                                        <td>{{$data->brand->name}}</td>
+                                                        <td>{{$data->quantity}}</td>
+                                                        <td><input type="number" class="form-control" name="quantity[]" /><input type="hidden" name="itemId[]" value="{{$data->id}}" /></td>
+                                                    </tr>
+                                                @endforeach
+                                                @else
+                                                <tr>
+                                                    <td colspan="7" class="text-center">There's no data</td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="col-md-12 mb-3">
                                 <button type="submit" class="btn btn-primary">Submit</button>

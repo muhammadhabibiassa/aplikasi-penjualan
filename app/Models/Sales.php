@@ -22,6 +22,11 @@ class Sales extends Model
     	'ppn' => 'integer'
     ];
 
+    public function sales_detail()
+    {
+        return $this->hasMany('App\Models\SalesDetail', 'salesId');
+    }
+
     public function item()
     {
     	return $this->belongsTo('App\Models\Item', 'idItem');

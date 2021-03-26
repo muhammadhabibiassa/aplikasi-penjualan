@@ -13,10 +13,10 @@ class AlterItemIdForPurchasesTable extends Migration
      */
     public function up()
     {
-        Schema::table('purchase_details', function (Blueprint $table) {
-            $table->unsignedInteger('purchaseId')->after('id')->index();
-            $table->foreign('purchaseId')->references('id')->on('purchases')->onDelete('cascade');
-        });
+        // Schema::table('purchase_details', function (Blueprint $table) {
+        //     $table->unsignedInteger('purchaseId')->after('id')->index();
+        //     $table->foreign('purchaseId')->references('id')->on('purchases')->onDelete('cascade');
+        // });
     }
 
     /**
@@ -26,8 +26,8 @@ class AlterItemIdForPurchasesTable extends Migration
      */
     public function down()
     {
-        Schema::table('purchase_details', function (Blueprint $table) {
-            $table->dropForeign(['purchaseId']);
-        });
+        // Schema::table('purchase_details', function (Blueprint $table) {
+        //     $table->dropForeign(['purchaseId']);
+        // });
     }
 }

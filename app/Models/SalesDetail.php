@@ -10,11 +10,12 @@ class SalesDetail extends Model
     use HasFactory;
 
     protected $fillable = [
-    	'idItem', 'sellingPrice', 'purchasePrice', 'quantity'
+    	'idItem', 'salesId', 'sellingPrice', 'purchasePrice', 'quantity'
     ];
 
     protected $casts = [
     	'idItem' => 'integer',
+        'salesId' => 'integer',
     	'sellingPrice' => 'integer',
     	'purchasePrice' => 'integer',
     	'quantity' => 'integer'
