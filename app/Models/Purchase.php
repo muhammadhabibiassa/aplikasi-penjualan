@@ -19,7 +19,7 @@ class Purchase extends Model
     	'discount' => 'integer',
     	'ppn' => 'integer',
     	'total' => 'integer',
-    	'date' => 'datetime',
+    	'date' => 'date',
     	'status' => 'string',
     ];
 

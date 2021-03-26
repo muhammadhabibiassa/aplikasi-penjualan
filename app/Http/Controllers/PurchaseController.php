@@ -88,6 +88,8 @@ class PurchaseController extends Controller
         $data = Purchase::with(['supplier', 'purchase_detail.item'])->find($id);
         $items = Item::get();
         $suppliers = Supplier::get();
+        $date=date_create($data->date);
+        $data->date = date_format($date,"Y-m-d");
         return view('purchases.purchase_edit', compact('data', 'suppliers', 'items'));
     }
 
