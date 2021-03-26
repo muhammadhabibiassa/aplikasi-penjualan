@@ -39,29 +39,31 @@ class SalesController extends Controller
      */
     public function store(Request $request)
     {
-        $total = 0;
-        $profit = 0;
-        dd($request->all());
-        $sales = Sales::create([
-            'idItem' => $request->idItem,
-            'invoiceNumber' => $request->invoiceNumber,
-            'total' => 0,
-            'profit' => 0,
-            'discount' => $request->discount,
-            'ppn' => $request->ppn,
-        ]);
-        foreach ($request->quantity as $key=>$order) {
-            $total += $order;
-            SalesDetail::create([
-                'salesId' => $sales->id,
-                'idItem' => $request->itemId[$key],
-                'sellingPrice' => 0,
-                'purchasePrice' => 0,
-                'quantity' => $order
-
+        // dd($request->all());
+        $arrayTemp = [];
+        $arraySubProfit = [];
+        $subtotal = 0;
+        $subProfit = 0;
+        foreach ($request->itemId as $key => $item) {
+            $itemTemp = Item::find($item);
+            // dd($itemTemp->name);
+            $subtotal += $itemTemp->sellingPrice * $request->quantity[$key];
+            $subProfit += $itemTemp->purchasePrice * $request->quantity[$key];
+            array_push($arrayTemp, [
+                'name' => $itemTemp->name,
+                'qty' => $request->quantity[$key],
+                'selling_price' => $itemTemp->sellingPrice,
+                'totalItem' => $itemTemp->sellingPrice * $request->quantity[$key]
+            ]);
+            array_push($arraySubProfit, [
+                'name' => $itemTemp->name,
+                'qty' => $request->quantity[$key],
+                'purchase_price' => $itemTemp->purchasePrice,
+                'subProfit' => $itemTemp->purchasePrice * $request->quantity[$key]
             ]);
         }
-        return redirect()->route('sales.index')->with('success', 'Sales successfully created');
+        $subtotal = $subtotal - ($subtotal * $request->discount / 100);
+        dd(['items' => $arrayTemp, 'sub_total' => $subtotal, 'sub_provit' => $subProfit, 'provit_item' => $arraySubProfit]);
     }
 
     /**
