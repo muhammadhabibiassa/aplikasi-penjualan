@@ -24,6 +24,6 @@ class Sales extends Model
 
     public function item()
     {
-    	return $this->belongsTo('App\Item', 'idItem');
+    	return $this->belongsTo('App\Models\Item', 'idItem');
     }
 }

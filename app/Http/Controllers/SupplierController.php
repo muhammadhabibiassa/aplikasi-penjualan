@@ -14,8 +14,8 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $datas = Supplier::get();
-        return view('suppliers.suppliers_list', compact('datas'));
+        $datas = Supplier::paginate(15);
+        return view('suppliers.supplier_list', compact('datas'));
     }
 
     /**
@@ -25,7 +25,7 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        return view('suppliers.suppliers_create');
+        return view('suppliers.supplier_create');
     }
 
     /**
@@ -45,7 +45,7 @@ class SupplierController extends Controller
             'postalCode' => $request->postalCode,
         ]);
         // return redirect()->back();
-        return redirect()->route('suppliers.index');
+        return redirect()->route('supplier.index');
     }
 
     /**
@@ -56,7 +56,8 @@ class SupplierController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Supplier::find($id);
+        return view('suppliers.supplier_show', compact('data'));
     }
 
     /**
@@ -67,7 +68,8 @@ class SupplierController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Supplier::find($id);
+        return view('suppliers.supplier_edit', compact('data'));
     }
 
     /**
@@ -79,7 +81,17 @@ class SupplierController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Supplier::find($id);
+        $data->update([
+            'name' => $request->name,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'state' => $request->state,
+            'city' => $request->city,
+            'postalCode' => $request->postalCode
+        ]);
+        // return redirect()->back();
+        return redirect()->route('supplier.index');
     }
 
     /**
@@ -90,6 +102,7 @@ class SupplierController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Supplier::find($id)->delete();
+        return redirect()->back();
     }
 }

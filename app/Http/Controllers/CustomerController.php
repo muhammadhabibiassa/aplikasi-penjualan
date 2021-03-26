@@ -14,7 +14,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $datas = Customer::get();
+        $datas = Customer::paginate(15);
         return view('customers.customers_list', compact('datas'));
     }
 
@@ -55,7 +55,8 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        //
+        $data = Customer::find($id);
+        return view('customers.customers_show', compact('data'));
     }
 
     /**
@@ -66,7 +67,8 @@ class CustomerController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Customer::find($id);
+        return view('customers.customers_edit', compact('data'));
     }
 
     /**
@@ -78,7 +80,16 @@ class CustomerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $data = Customer::find($id);
+        $data->update([
+            'name' => $request->name,
+            'gender' => $request->gender,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'address' => $request->address
+        ]);
+        // return redirect()->back();
+        return redirect()->route('customer.index');
     }
 
     /**
@@ -89,6 +100,7 @@ class CustomerController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Customer::find($id)->delete();
+        return redirect()->back();
     }
 }
