@@ -63,6 +63,30 @@ class SalesController extends Controller
             ]);
         }
         $subtotal = $subtotal - ($subtotal * $request->discount / 100);
+        $subProfit = $subProfit - ($subProfit * $request->discount / 100);
+        $subtotal = $subtotal + ($subtotal * $request->ppn / 100);
+
+        $sales = Sales::create([
+            'idItem' => $request->idItem,
+            'invoiceNumber' => $request->invoiceNumber,
+            'discount' => $request->discount,
+            'ppn' => $request->ppn,
+            'date' => $request->date,
+            'total' => 0,
+            'profit' => 0,
+        ]);
+        // return redirect()->back();
+        foreach ($request->ordered as $key=>$order) {
+            $total += $order;
+            SalesDetail::create([
+                'salesId' => $sales->id,
+                'idItem' => $request->itemId[$key],
+                'sellingPrice' => $$itemTemp->sellingPrice,
+                'accepted' => 0,
+            ]);
+        }
+        return redirect()->route('sales.index')->with('success', 'Sales successfully created');
+
         dd(['items' => $arrayTemp, 'sub_total' => $subtotal, 'sub_provit' => $subProfit, 'provit_item' => $arraySubProfit]);
     }
 
