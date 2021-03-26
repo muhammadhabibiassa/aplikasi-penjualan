@@ -39,55 +39,48 @@ class SalesController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
         $arrayTemp = [];
-        $arraySubProfit = [];
         $subtotal = 0;
         $subProfit = 0;
-        foreach ($request->itemId as $key => $item) {
-            $itemTemp = Item::find($item);
-            // dd($itemTemp->name);
-            $subtotal += $itemTemp->sellingPrice * $request->quantity[$key];
-            $subProfit += $itemTemp->purchasePrice * $request->quantity[$key];
-            array_push($arrayTemp, [
-                'name' => $itemTemp->name,
-                'qty' => $request->quantity[$key],
-                'selling_price' => $itemTemp->sellingPrice,
-                'totalItem' => $itemTemp->sellingPrice * $request->quantity[$key]
-            ]);
-            array_push($arraySubProfit, [
-                'name' => $itemTemp->name,
-                'qty' => $request->quantity[$key],
-                'purchase_price' => $itemTemp->purchasePrice,
-                'subProfit' => $itemTemp->purchasePrice * $request->quantity[$key]
-            ]);
-        }
-        $subtotal = $subtotal - ($subtotal * $request->discount / 100);
-        $subProfit = $subProfit - ($subProfit * $request->discount / 100);
-        $subtotal = $subtotal + ($subtotal * $request->ppn / 100);
-
         $sales = Sales::create([
-            'idItem' => $request->idItem,
             'invoiceNumber' => $request->invoiceNumber,
             'discount' => $request->discount,
             'ppn' => $request->ppn,
             'date' => $request->date,
             'total' => 0,
-            'profit' => 0,
+            'profit' => 0
         ]);
-        // return redirect()->back();
-        foreach ($request->ordered as $key=>$order) {
-            $total += $order;
+        foreach ($request->itemId as $key => $item) {
+            $itemTemp = Item::find($item);
+            $subtotal += $itemTemp->sellingPrice * $request->quantity[$key];
+            $subProfit += $itemTemp->purchasePrice * $request->quantity[$key];
+            // array_push($arrayTemp, [
+            //     'salesId' => $sales->id,
+            //     'idItem' => $item,
+            //     'purchasePrice' => $itemTemp->purchasePrice,
+            //     'sellingPrice' => $itemTemp->sellingPrice,
+            //     'quantity' => $request->quantity[$key],
+            // ]);
             SalesDetail::create([
                 'salesId' => $sales->id,
-                'idItem' => $request->itemId[$key],
-                'sellingPrice' => $$itemTemp->sellingPrice,
-                'accepted' => 0,
+                'idItem' => $item,
+                'purchasePrice' => $itemTemp->purchasePrice,
+                'sellingPrice' => $itemTemp->sellingPrice,
+                'quantity' => $request->quantity[$key],
             ]);
         }
+        // SalesDetail::insert($arrayTemp);
+        $subtotal = $subtotal - ($subtotal * $request->discount / 100);
+        $profit = $subProfit - ($subProfit * $request->discount / 100);
+        $total = $subtotal + ($subtotal * $request->ppn / 100);
+        $sales->update([
+            'total' => $total,
+            'provit' => $profit
+        ]);
+
         return redirect()->route('sales.index')->with('success', 'Sales successfully created');
 
-        dd(['items' => $arrayTemp, 'sub_total' => $subtotal, 'sub_provit' => $subProfit, 'provit_item' => $arraySubProfit]);
+        
     }
 
     /**
