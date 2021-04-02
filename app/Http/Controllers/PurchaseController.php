@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Purchase;
 use App\Models\Supplier;
 use App\Models\Item;
+use App\Models\Stock;
 use App\Models\PurchaseDetail;
 
 class PurchaseController extends Controller
@@ -42,6 +43,7 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         $total = 0;
+        $subtotal = 0;
         $purchase = Purchase::create([
             'idSupplier' => $request->idSupplier,
             'invoiceNumber' => $request->invoiceNumber,
@@ -52,17 +54,53 @@ class PurchaseController extends Controller
             'status' => !is_null($request->status)? 1 : 0,
         ]);
         // return redirect()->back();
-        foreach ($request->ordered as $key=>$order) {
-            $total += $order;
-            PurchaseDetail::create([
-                'purchaseId' => $purchase->id,
-                'idItem' => $request->itemId[$key],
-                'ordered' => $order,
-                'accepted' => 0,
-            ]);
+        foreach ($request->itemId as $key => $item) {
+            $itemTemp = Item::find($item);
+            $subtotal += $itemTemp->sellingPrice * $request->ordered[$key];
+            $getLastStock = Stock::where('idItem', $item)->orderBy('created_at', 'desc')->first();
+            if (!is_null($request->ordered[$key])) {
+                array_push($arrayTemp, [
+                    'purchaseId' => $purchase->id,
+                    'idItem' => $item,
+                    'ordered' => $request->ordered[$key],
+                    'accepted' => 0,
+                ]);
+                Stock::create([
+                    'idItem' => $item,
+                    'stockIn' => $request->ordered[$key],
+                    'total' => !is_null($getLastStock) && $getLastStock->total !== 0 ? $getLastStock->total + $request->ordered[$key] : $itemTemp->quantity + $request->ordered[$key]
+                ]);
+                $itemTemp->update([
+                    'quantity' => !is_null($getLastStock) && $getLastStock->total !== 0 ? $getLastStock->total + $request->ordered[$key] : $itemTemp->quantity + $request->ordered[$key]
+                ]);
+            }
+            // SalesDetail::create([
+            //     'salesId' => $sales->id,
+            //     'idItem' => $item,
+            //     'purchasePrice' => $itemTemp->purchasePrice,
+            //     'sellingPrice' => $itemTemp->sellingPrice,
+            //     'quantity' => $request->quantity[$key],
+            // ]);
         }
-        Purchase::find($purchase->id)->update(['total' => $total]);
+        PurchaseDetail::insert($arrayTemp);
+        $subtotal = $subtotal - ($subtotal * $request->discount / 100);
+        $total = $subtotal + ($subtotal * $request->ppn / 100);
+        $purchase->update([
+            'total' => $total
+        ]);
+
         return redirect()->route('purchase.index')->with('success', 'Purchase successfully created');
+        // foreach ($request->ordered as $key=>$order) {
+        //     $total += $order;
+        //     PurchaseDetail::create([
+        //         'purchaseId' => $purchase->id,
+        //         'idItem' => $request->itemId[$key],
+        //         'ordered' => $order,
+        //         'accepted' => 0,
+        //     ]);
+        // }
+        // Purchase::find($purchase->id)->update(['total' => $total]);
+        // return redirect()->route('purchase.index')->with('success', 'Purchase successfully created');
     }
 
     /**

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Sales;
 use App\Models\Item;
 use App\Models\SalesDetail;
+use App\Models\Stock;
 
 class SalesController extends Controller
 {
@@ -16,7 +17,7 @@ class SalesController extends Controller
      */
     public function index()
     {
-        $datas = Sales::with(['item'])->paginate(15);
+        $datas = Sales::with(['item'])->orderBy('created_at', 'desc')->paginate(15);
         return view('sales.sales_list', compact('datas'));
     }
 
@@ -54,33 +55,42 @@ class SalesController extends Controller
             $itemTemp = Item::find($item);
             $subtotal += $itemTemp->sellingPrice * $request->quantity[$key];
             $subProfit += $itemTemp->purchasePrice * $request->quantity[$key];
-            // array_push($arrayTemp, [
+            $getLastStock = Stock::where('idItem', $item)->orderBy('created_at', 'desc')->first();
+            if (!is_null($request->quantity[$key])) {
+                array_push($arrayTemp, [
+                    'salesId' => $sales->id,
+                    'idItem' => $item,
+                    'purchasePrice' => $itemTemp->purchasePrice,
+                    'sellingPrice' => $itemTemp->sellingPrice,
+                    'quantity' => $request->quantity[$key],
+                ]);
+                Stock::create([
+                    'idItem' => $item,
+                    'stockOut' => $request->quantity[$key],
+                    'total' => !is_null($getLastStock) && $getLastStock->total !== 0 ? $getLastStock->total - $request->quantity[$key] : $itemTemp->quantity - $request->quantity[$key]
+                ]);
+                $itemTemp->update([
+                    'quantity' => !is_null($getLastStock) && $getLastStock->total !== 0 ? $getLastStock->total - $request->quantity[$key] : $itemTemp->quantity - $request->quantity[$key]
+                ]);
+            }
+            // SalesDetail::create([
             //     'salesId' => $sales->id,
             //     'idItem' => $item,
             //     'purchasePrice' => $itemTemp->purchasePrice,
             //     'sellingPrice' => $itemTemp->sellingPrice,
             //     'quantity' => $request->quantity[$key],
             // ]);
-            SalesDetail::create([
-                'salesId' => $sales->id,
-                'idItem' => $item,
-                'purchasePrice' => $itemTemp->purchasePrice,
-                'sellingPrice' => $itemTemp->sellingPrice,
-                'quantity' => $request->quantity[$key],
-            ]);
         }
-        // SalesDetail::insert($arrayTemp);
+        SalesDetail::insert($arrayTemp);
         $subtotal = $subtotal - ($subtotal * $request->discount / 100);
         $profit = $subProfit - ($subProfit * $request->discount / 100);
         $total = $subtotal + ($subtotal * $request->ppn / 100);
         $sales->update([
             'total' => $total,
-            'provit' => $profit
+            'profit' => $profit
         ]);
 
         return redirect()->route('sales.index')->with('success', 'Sales successfully created');
-
-        
     }
 
     /**
@@ -103,7 +113,8 @@ class SalesController extends Controller
      */
     public function edit($id)
     {
-        //
+        $data = Sales::with(['sales_detail.item'])->find($id);
+        return view('sales.sales_edit', compact('data'));
     }
 
     /**
@@ -115,7 +126,47 @@ class SalesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $arrayTemp = [];
+        $subtotal = 0;
+        $subProfit = 0;
+
+        $data = Sales::find($id);
+        $data->update([
+            'invoiceNumber' => $request->invoiceNumber,
+            'discount' => $request->discount,
+            'ppn' => $request->ppn
+        ]);
+        foreach ($request->salesDetailId as $key => $dataId) {
+            $salesDetail = SalesDetail::with('item')->find($dataId);
+            $salesDetail->update([
+                'quantity' => $request->quantity[$key]
+            ]);
+
+            $subtotal += $salesDetail->item->sellingPrice * $request->quantity[$key];
+            $subProfit += $salesDetail->item->purchasePrice * $request->quantity[$key];
+            $getLastStock = Stock::where('idItem', $salesDetail->idItem)->orderBy('created_at', 'desc')->first();
+            if (!is_null($request->quantity[$key])) {
+                Stock::create([
+                    'idItem' => $salesDetail->idItem,
+                    'stockOut' => $request->quantity[$key],
+                    'total' => !is_null($getLastStock) && $getLastStock->total !== 0 ? $getLastStock->total - $request->quantity[$key] : $salesDetail->quantity - $request->quantity[$key]
+                ]);
+                $salesDetail->update([
+                    'quantity' => !is_null($getLastStock) && $getLastStock->total !== 0 ? $getLastStock->total - $request->quantity[$key] : $salesDetail->quantity - $request->quantity[$key]
+                ]);
+            }
+
+        }
+
+        $subtotal = $subtotal - ($subtotal * $request->discount / 100);
+        $profit = $subProfit - ($subProfit * $request->discount / 100);
+        $total = $subtotal + ($subtotal * $request->ppn / 100);
+        $data->update([
+            'total' => $total,
+            'profit' => $profit
+        ]);
+
+        return redirect()->route('sales.index')->with('success', 'Sales successfully updated');
     }
 
     /**

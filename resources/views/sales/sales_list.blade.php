@@ -18,7 +18,6 @@
                                 <thead>
                                     <tr>
                                         <th>Invoice Number</th>
-                                        <th>Item</th>
                                         <th>Total</th>
                                         <th>Profit</th>
                                         <th>
@@ -31,7 +30,6 @@
                                         @foreach ($datas as $data)
                                             <tr>
                                                 <td>{{$data->invoiceNumber}}</td>
-                                                <td>{{$data->total}}</td>
                                                 <td>{{$data->total}}</td>
                                                 <td>{{$data->profit}}</td>
                                                 <td class="text-center">

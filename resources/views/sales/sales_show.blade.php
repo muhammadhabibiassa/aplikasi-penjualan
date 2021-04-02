@@ -38,7 +38,6 @@
                                             <th>Category</th>
                                             <th>Brand</th>
                                             <th>Quantity</th>
-                                            <th>Total Pesanan</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -49,7 +48,6 @@
                                                     <td>{{$sales_detail->item->category->name}}</td>
                                                     <td>{{$sales_detail->item->brand->name}}</td>
                                                     <td>{{$sales_detail->item->quantity}}</td>
-                                                    <td><input type="number" class="form-control" name="ordered[]" value="{{$sales_detail->ordered}}" /></td>
                                                 </tr>
                                             @endforeach
                                             @else
